@@ -19,6 +19,7 @@ screen_height = 700
 FOVY=60.0
 ZNEAR=0.01
 ZFAR=900.0
+
 #Variables para definir la posicion del observador
 #gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
 EYE_X=300.0
@@ -30,6 +31,7 @@ CENTER_Z=0
 UP_X=0
 UP_Y=1
 UP_Z=0
+
 #Variables para dibujar los ejes del sistema
 X_MIN=-700
 X_MAX=700
@@ -59,7 +61,6 @@ filename6 = "carroPuerta.bmp"
 Theta  = 0
 Direction = [300.0,200.0,300.0]
 PI = 3.14159265359
-
 
 
 def DegToRad(g):
@@ -110,18 +111,19 @@ def Init():
     glClearColor(0,0,0,0)
     glEnable(GL_DEPTH_TEST)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+    
     Texturas(filename1)
     Texturas(filename2)
     Texturas(filename3)
     Texturas(filename4)
     Texturas(filename5)
     Texturas(filename6)
+    
     for i in range(ncarros):
         carros.append(Carro(DimBoard, 2.0))
     for i in range(nbasuras):
         basuras.append(Basura(DimBoard))
         
-
 
 def PlanoTexturizado():
     
@@ -174,6 +176,8 @@ def Texturas(filepath):
 Init()
 while not done:
     for event in pygame.event.get():
+        
+        
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 if Theta > 359.0:
@@ -187,7 +191,10 @@ while not done:
                 else:
                     Theta += 1.0 
                 LookAt()
-        
+              
+        elif event.type == pygame.QUIT:
+            done = True
+            
         glLoadIdentity()
         gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
     
