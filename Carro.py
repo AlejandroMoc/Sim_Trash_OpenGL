@@ -1,14 +1,11 @@
+# Librerías
 import pygame
 from pygame.locals import *
-
-# Cargamos las bibliotecas de OpenGL
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-
 import random
 import math
-
 
 class Basura:
     def __init__(self, dim):
@@ -32,11 +29,12 @@ class Basura:
         #Se inicializa una posicion aleatoria en el tablero
         self.Position[0] = random.randint(-self.DimBoard, self.DimBoard)
         self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
-        
+    
+    #AQUI CAMBIAR ESTE
     def draw(self):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-        glScaled(2,2,2)
+        glScaled(5,5,5)
         glEnableClientState(GL_VERTEX_ARRAY)
         glEnableClientState(GL_COLOR_ARRAY)
         glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
@@ -46,6 +44,67 @@ class Basura:
         glDisableClientState(GL_COLOR_ARRAY)
         glPopMatrix()
         
+    #PARA USAR TEXTURAS COMO EN ESTE  
+    # def draw(self,textura,id, id2, id3, id4, id5):
+    #     glPushMatrix()
+    #     glTranslatef(self.Position[0], self.Position[1], self.Position[2])
+    #     glScaled(5,5,5)
+    #     glColor3f(1.0, 1.0, 1.0)
+    #     #Activar texturas
+    #     glEnable(GL_TEXTURE_2D)
+    #     #frente
+    #     glBindTexture(GL_TEXTURE_2D, textura[id2])
+    #     self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
+    #     #derecha
+    #     glBindTexture(GL_TEXTURE_2D, textura[id5])
+    #     self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
+    #     #atrás
+    #     glBindTexture(GL_TEXTURE_2D, textura[id3])
+    #     self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
+    #     #izquierda
+    #     glBindTexture(GL_TEXTURE_2D, textura[id5])
+    #     self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
+    #     # Arriba
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
+    #      # Dibujar cubo a la derecha
+    #     glDisable(GL_TEXTURE_2D)
+    #     glPushMatrix()
+    #     glColor3f(0.0,0.0,0.0)
+    #     glTranslatef(1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la derecha
+    #     glRotatef(90,0,1,0)
+    #     self.cilindro.draw()
+    #     glPopMatrix()
+    #     # Dibujar cubo a la izquierda
+    #     glPushMatrix()
+    #     glTranslatef(-1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la izquierda
+    #     glRotatef(90,0,1,0)
+    #     self.cilindro.draw()
+    #     glPopMatrix()
+    #     glPushMatrix()
+    #     glTranslatef(0.0, 1.5, -0.5)
+    #     glScaled(0.5,0.5,0.5)
+    #     glColor3f(1.0, 1.0, 1.0)
+    #     #Activar texturas
+    #     glEnable(GL_TEXTURE_2D)
+    #     #frente
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
+    #     #derecha
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
+    #     #atrás
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
+    #     #izquierda
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
+    #     # Arriba
+    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
+    #     self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
+    #     glPopMatrix()
+    #     glPopMatrix()
+
 
 class Cilindro:
     def __init__(self, radio, altura, slices=30, stacks=30):
@@ -73,7 +132,7 @@ class Cilindro:
 
         gluDeleteQuadric(quadric)
         glPopMatrix()
-        
+
 class Carro:
     
     def __init__(self, dim, vel):
@@ -121,8 +180,6 @@ class Carro:
         self.Direction[1] *= vel
         self.Direction[2] *= vel
 
-
-
     def update(self):
         #Se debe de calcular la posible nueva posicion del cubo a partir de su
         #posicion acutual (Position) y el vector de direccion (Direction)
@@ -165,24 +222,24 @@ class Carro:
         glTexCoord2f(1.0, 0.0)
         glVertex3f(x4, y4, z4)
         glEnd()
+        
+    # Dibujado base
+    # def draw(self):
+    #     glPushMatrix()
+    #     glTranslatef(self.Position[0], self.Position[1], self.Position[2])
+    #     glScaled(5,5,5)
+    #     #Se dibuja el cubo
+    #     #...
+    #     glEnableClientState(GL_VERTEX_ARRAY)
+    #     glEnableClientState(GL_COLOR_ARRAY)
+    #     glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
+    #     glColorPointer(3, GL_FLOAT, 0, self.vertexColors)
+    #     glDrawElements(GL_QUADS,24,GL_UNSIGNED_INT,self.elementArray)
+    #     glDisableClientState(GL_VERTEX_ARRAY)
+    #     glDisableClientState(GL_COLOR_ARRAY)
+    #     glPopMatrix()
 
-    def draw(self):
-        glPushMatrix()
-        glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-        glScaled(5,5,5)
-        #Se dibuja el cubo
-        #...
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glEnableClientState(GL_COLOR_ARRAY)
-        glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
-        glColorPointer(3, GL_FLOAT, 0, self.vertexColors)
-        glDrawElements(GL_QUADS,24,GL_UNSIGNED_INT,self.elementArray)
-        glDisableClientState(GL_VERTEX_ARRAY)
-        glDisableClientState(GL_COLOR_ARRAY)
-        glPopMatrix()
-        
-        
-    def drawCube(self,textura,id, id2, id3, id4, id5):
+    def drawCar(self,textura,id, id2, id3, id4, id5):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
@@ -241,4 +298,3 @@ class Carro:
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
         glPopMatrix()
         glPopMatrix()
-

@@ -1,9 +1,7 @@
+# Librerías
 import pygame
 import math
-
 from pygame.locals import *
-
-# Cargamos las bibliotecas de OpenGL
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -44,7 +42,6 @@ DimBoard = 200
 
 pygame.init()
 
-#cubo = Cubo(DimBoard, 1.0)
 carros = []
 ncarros = 5
 
@@ -58,13 +55,12 @@ filename3 = "carro.bmp"
 filename4 = "carroAtras.bmp"
 filename5 = "carroVentana.bmp"
 filename6 = "carroPuerta.bmp"
+filename7 = "basura.bmp"
 Theta  = 0
 Direction = [300.0,200.0,300.0]
-PI = 3.14159265359
-
 
 def DegToRad(g):
-    return ((g*PI)/180.0)
+    return ((g*math.pi)/180.0)
 
 def LookAt():
     global EYE_X, EYE_Z
@@ -97,8 +93,7 @@ def Axis():
     glLineWidth(1.0)
 
 def Init():
-    screen = pygame.display.set_mode(
-        (screen_width, screen_height), DOUBLEBUF | OPENGL)
+    screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("OpenGL: Carros recogedores")
 
     glMatrixMode(GL_PROJECTION)
@@ -118,6 +113,7 @@ def Init():
     Texturas(filename4)
     Texturas(filename5)
     Texturas(filename6)
+    Texturas(filename7)
     
     for i in range(ncarros):
         carros.append(Carro(DimBoard, 2.0))
@@ -145,20 +141,17 @@ def PlanoTexturizado():
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     Axis()
-    #Se dibuja el plano 
     PlanoTexturizado()
     for bas in basuras:
         bas.draw()
     for obj in carros:
-        obj.drawCube(textures,0, 2, 3, 4, 5)
+        obj.drawCar(textures,0, 2, 3, 4, 5)
         obj.update()
 
 
 done = False
 
 #Mover aleatoriamente el vector de direccion
-
-
 def Texturas(filepath):
     textures.append(glGenTextures(1))
     id = len(textures) - 1
