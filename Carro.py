@@ -36,8 +36,22 @@ class Basura:
         self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
         self.condition = self.TIRADA
         
+    def drawFace(self, x1,  y1, z1, x2, y2, z2,x3, y3, z3,x4,  y4,  z4):
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(x1, y1, z1)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(x2, y2, z2)
+
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(x3, y3, z3)
+
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(x4, y4, z4)
+        glEnd()
+    
     #AQUI CAMBIAR ESTE
-    def draw(self, textura, id7):
+    def draw(self, textura, id6):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
@@ -45,7 +59,7 @@ class Basura:
         # #Activar texturas
         # glEnable(GL_TEXTURE_2D)
         
-        glBindTexture(GL_TEXTURE_2D, textura[id7]) 
+        glBindTexture(GL_TEXTURE_2D, textura[id6]) 
 
         # Dibujar las caras del cubo con la misma textura
         self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
