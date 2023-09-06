@@ -10,120 +10,6 @@ import math
 def distancia_entre_puntos(p1, p2):
     return math.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)
 
-class Basura:
-    RECOLECTADA = 0
-    TIRADA = 1
-    def __init__(self, dim):
-        self.radio = 7.0
-        self.Position = [0.0, 2.0, 0.0]
-        #Se inicializa las coordenadas de los vertices del cubo
-        self.vertexCoords = [  
-                   1,1,1,   1,1,-1,   1,-1,-1,   1,-1,1,
-                  -1,1,1,  -1,1,-1,  -1,-1,-1,  -1,-1,1 ]
-        
-        #Vertice de los diferentes colores
-        self.vertexColors = [ 
-                   1,1,1,   1,0,0,   1,1,0,   0,1,0,
-                   0,0,1,   1,0,1,   0,0,0,   0,1,1 ]
-
-        self.elementArray = [
-                  0,1,2,3, 0,3,7,4, 0,4,5,1,
-                  6,2,1,5, 6,5,4,7, 6,7,3,2 ]
-        
-        self.DimBoard = dim
-        #Posicion aleatoria
-        self.Position[0] = random.randint(-self.DimBoard, self.DimBoard)
-        self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
-        self.condition = self.TIRADA
-        
-    #AQUI CAMBIAR ESTE
-    def draw(self):
-        glPushMatrix()
-        glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-        glScaled(5,5,5)
-        # glColor3f(1.0, 1.0, 1.0)
-        # #Activar texturas
-        # glEnable(GL_TEXTURE_2D)
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glEnableClientState(GL_COLOR_ARRAY)
-        glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
-        glColorPointer(3, GL_FLOAT, 0, self.vertexColors)
-        glDrawElements(GL_QUADS,24,GL_UNSIGNED_INT,self.elementArray)
-        glDisableClientState(GL_VERTEX_ARRAY)
-        glDisableClientState(GL_COLOR_ARRAY)
-        glPopMatrix()
-        
-    #PARA USAR TEXTURAS COMO EN ESTE  
-    # def draw(self,textura,id, id2, id3, id4, id5):
-    #     glPushMatrix()
-    #     glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-    #     glScaled(5,5,5)
-    #     glColor3f(1.0, 1.0, 1.0)
-    #     #Activar texturas
-    #     glEnable(GL_TEXTURE_2D)
-    #     #frente
-    #     glBindTexture(GL_TEXTURE_2D, textura[id2])
-    #     self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
-    #     #derecha
-    #     glBindTexture(GL_TEXTURE_2D, textura[id5])
-    #     self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
-    #     #atrás
-    #     glBindTexture(GL_TEXTURE_2D, textura[id3])
-    #     self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
-    #     #izquierda
-    #     glBindTexture(GL_TEXTURE_2D, textura[id5])
-    #     self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
-    #     # Arriba
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
-    #      # Dibujar cubo a la derecha
-    #     glDisable(GL_TEXTURE_2D)
-    #     glPushMatrix()
-    #     glColor3f(0.0,0.0,0.0)
-    #     glTranslatef(1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la derecha
-    #     glRotatef(90,0,1,0)
-    #     self.cilindro.draw()
-    #     glPopMatrix()
-    #     # Dibujar cubo a la izquierda
-    #     glPushMatrix()
-    #     glTranslatef(-1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la izquierda
-    #     glRotatef(90,0,1,0)
-    #     self.cilindro.draw()
-    #     glPopMatrix()
-    #     glPushMatrix()
-    #     glTranslatef(0.0, 1.5, -0.5)
-    #     glScaled(0.5,0.5,0.5)
-    #     glColor3f(1.0, 1.0, 1.0)
-    #     #Activar texturas
-    #     glEnable(GL_TEXTURE_2D)
-    #     #frente
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
-    #     #derecha
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
-    #     #atrás
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
-    #     #izquierda
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
-    #     # Arriba
-    #     glBindTexture(GL_TEXTURE_2D, textura[id4])
-    #     self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
-    #     glPopMatrix()
-    #     glPopMatrix()
-
-    def update(self, pos):
-        self.Position[0] = pos[0]
-        self.Position[1] = pos[1] + 13.0
-        self.Position[2] = pos[2]
-
-    def centrar(self):
-        self.Position[0] = 0.0
-        self.Position[1] = 2.0
-        self.Position[2] = 0.0
-        
 class Cilindro:
     def __init__(self, radio, altura, slices=30, stacks=30):
         self.radio = radio
@@ -150,6 +36,109 @@ class Cilindro:
 
         gluDeleteQuadric(quadric)
         glPopMatrix()
+
+class Basura:
+    RECOLECTADA = 0
+    TIRADA = 1
+    def __init__(self, dim):
+        self.angulo = 0
+        self.radio = 7.0
+        self.Position = [0.0, 2.0, 0.0]
+        #Se inicializa las coordenadas de los vertices del cubo
+        self.vertexCoords = [  
+                   1,1,1,   1,1,-1,   1,-1,-1,   1,-1,1,
+                  -1,1,1,  -1,1,-1,  -1,-1,-1,  -1,-1,1 ]
+        
+        #Colores de los vertices
+        self.vertexColors = [ 
+                   1,1,1,   1,1,1,   1,1,1,   1,1,1,
+                   1,1,1,   1,1,1,   1,1,1,   1,1,1 ]
+        
+        self.vertexColorful = [ 
+                   1,1,1,   1,0,0,   1,1,0,   0,1,0,
+                   0,0,1,   1,0,1,   0,0,0,   0,1,1 ]
+
+        self.elementArray = [
+                  0,1,2,3, 0,3,7,4, 0,4,5,1,
+                  6,2,1,5, 6,5,4,7, 6,7,3,2 ]
+        
+        self.DimBoard = dim
+        #Posicion aleatoria
+        self.Position[0] = random.randint(-self.DimBoard, self.DimBoard)
+        self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
+        self.condition = self.TIRADA
+    
+    def drawFace(self, x1,  y1, z1, x2, y2, z2,x3, y3, z3,x4,  y4,  z4):
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(x1, y1, z1)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(x2, y2, z2)
+
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(x3, y3, z3)
+
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(x4, y4, z4)
+        glEnd()
+      
+    #AQUI CAMBIAR ESTE
+    def draw(self, textura, id):
+        glPushMatrix()
+        glTranslatef(self.Position[0], self.Position[1], self.Position[2])
+        glScaled(5,5,5)
+        glColor3f(1.0, 1.0, 1.0)
+        # #Activar texturas
+        # glEnable(GL_TEXTURE_2D)
+        glEnableClientState(GL_VERTEX_ARRAY)
+        glEnableClientState(GL_COLOR_ARRAY)
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
+        glColorPointer(3, GL_FLOAT, 0, self.vertexColors)
+        glDrawElements(GL_QUADS,24,GL_UNSIGNED_INT,self.elementArray)
+        glDisableClientState(GL_VERTEX_ARRAY)
+        glDisableClientState(GL_COLOR_ARRAY)
+        glPopMatrix()
+        
+    #PARA USAR TEXTURAS COMO EN ESTE  
+    def drawTrash(self,textura,id):
+        
+        glPushMatrix()
+        glTranslatef(self.Position[0], self.Position[1], self.Position[2])
+        glScaled(5,5,5)
+        glRotatef(self.angulo, 0, 1, 0)
+        glColor3f(1.0, 1.0, 1.0)
+        
+        #Activar texturas
+        glEnable(GL_TEXTURE_2D)
+        #frente
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
+        #derecha
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
+        #atrás
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
+        #izquierda
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
+        # Arriba
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
+        glDisable(GL_TEXTURE_2D)
+        
+        glPopMatrix()
+    
+    def update(self, pos):
+        self.Position[0] = pos[0]
+        self.Position[1] = pos[1] + 13.0
+        self.Position[2] = pos[2]
+
+    def centrar(self):
+        self.Position[0] = 0.0
+        self.Position[1] = 2.0
+        self.Position[2] = 0.0
 
 class Carro:
     BUSCANDO = 0
@@ -422,6 +411,7 @@ class Carro:
             next_move = mejor_movimiento
             self.Position[0] = next_move[0]
             self.Position[2] = next_move[1]
+            #Sospecho que es aquí donde se eleva la basura a la plataforma (CONFIRMAR)
             self.basura.update((self.Position[0],self.AlturaPlataforma,self.Position[2] + 7.0))
             if next_move == centro:
                 self.basura.centrar()
@@ -468,6 +458,7 @@ class Carro:
         glEnd()
 
     def drawCar(self,textura,id, id2, id3, id4, id5):
+        
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
@@ -490,24 +481,28 @@ class Carro:
         # Arriba
         glBindTexture(GL_TEXTURE_2D, textura[id4])
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
-         # Dibujar cilindro a la derecha
         glDisable(GL_TEXTURE_2D)
+        
+        # Dibujar cilindro a la derecha
         glPushMatrix()
         glColor3f(0.0,0.0,0.0)
-        glTranslatef(1.5, 0.0, 0.0)  
+        glTranslatef(1.0, 0.0, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
+        
         # Dibujar cilindro a la izquierda
         glPushMatrix()
         glTranslatef(-1.5, 0.0, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
+        
         glPushMatrix()
         glTranslatef(0.0, 1.5, -0.5)
         glScaled(0.5,0.5,0.5)
         glColor3f(1.0, 1.0, 1.0)
+        
         #Activar texturas
         glEnable(GL_TEXTURE_2D)
         #frente
@@ -534,7 +529,6 @@ class Carro:
         glDisable(GL_TEXTURE_2D)
         glPopMatrix()
         glPopMatrix()
-
     
     def buscaColision(self,basuras):
         for basura in basuras:  

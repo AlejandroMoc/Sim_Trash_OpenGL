@@ -149,7 +149,8 @@ def display():
     Axis()
     PlanoTexturizado()
     for bas in basuras:
-        bas.draw()
+        # bas.draw(textures,6)
+        bas.drawTrash(textures,6)
     for obj in carros:
         obj.drawCar(textures,0, 2, 3, 4, 5)
         obj.update()
