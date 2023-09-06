@@ -111,20 +111,11 @@ class Basura:
         
         #Activar texturas
         glEnable(GL_TEXTURE_2D)
-        #frente
         glBindTexture(GL_TEXTURE_2D, textura[id])
         self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
-        #derecha
-        glBindTexture(GL_TEXTURE_2D, textura[id])
         self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
-        #atrás
-        glBindTexture(GL_TEXTURE_2D, textura[id])
         self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
-        #izquierda
-        glBindTexture(GL_TEXTURE_2D, textura[id])
         self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
-        # Arriba
-        glBindTexture(GL_TEXTURE_2D, textura[id])
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
         glDisable(GL_TEXTURE_2D)
         
