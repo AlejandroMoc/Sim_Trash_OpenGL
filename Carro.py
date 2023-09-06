@@ -214,9 +214,9 @@ class Carro:
                             self.angulo += 90
                             self.contadorSubida = 0
                 #Segundos movimientos
-                elif x > 0 and self.ZigzagDir[0] == -1:
+                elif x > 15 and self.ZigzagDir[0] == -1:
                     next_move = (x - self.Direction[0], z)
-                elif x == 0 and self.ZigzagDir[0] == -1:
+                elif x == 15 and self.ZigzagDir[0] == -1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -230,12 +230,12 @@ class Carro:
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
-                
+
             elif self.id == 1:  
                 #Primeros movimientos
-                if x < 0 and self.ZigzagDir[0] == 1:
+                if x < -15 and self.ZigzagDir[0] == 1:
                     next_move = (x + self.Direction[0], z)
-                elif x == 0 and self.ZigzagDir[0] == 1:
+                elif x == -15 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -267,9 +267,9 @@ class Carro:
                 
             elif self.id == 2:
                 #Primeros movimientos
-                if x > 0 and self.ZigzagDir[0] == 1:
+                if x > 15 and self.ZigzagDir[0] == 1:
                     next_move = (x - self.Direction[0], z)
-                elif x == 0 and self.ZigzagDir[0] == 1:
+                elif x == 15 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -301,9 +301,9 @@ class Carro:
                 
             elif self.id == 3:
                 #Primeros movimientos
-                if x < 0 and self.ZigzagDir[0] == 1:
+                if x < -15 and self.ZigzagDir[0] == 1:
                     next_move = (x + self.Direction[0], z)
-                elif x == 0 and self.ZigzagDir[0] == 1:
+                elif x == -15 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
