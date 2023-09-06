@@ -37,13 +37,26 @@ class Basura:
         self.condition = self.TIRADA
         
     #AQUI CAMBIAR ESTE
-    def draw(self):
+    def draw(self, textura, id7):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
         # glColor3f(1.0, 1.0, 1.0)
         # #Activar texturas
         # glEnable(GL_TEXTURE_2D)
+        
+        glBindTexture(GL_TEXTURE_2D, textura[id7]) 
+
+        # Dibujar las caras del cubo con la misma textura
+        self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
+        self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
+        self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
+        self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
+        self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
+
+        
+        
+        
         glEnableClientState(GL_VERTEX_ARRAY)
         glEnableClientState(GL_COLOR_ARRAY)
         glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
