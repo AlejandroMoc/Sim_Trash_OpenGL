@@ -53,7 +53,6 @@ robotpositions=[
     (-DimBoard,-DimBoard),
     (DimBoard,DimBoard),
     (-DimBoard,DimBoard)
-
 ]
         
 textures = []
@@ -127,7 +126,6 @@ def Init():
         carros.append(Carro(DimBoard, 1.0, robotpositions[i], i))
     for i in range(nbasuras):
         basuras.append(Basura(DimBoard))
-        
 
 def PlanoTexturizado():
     
@@ -155,6 +153,8 @@ def display():
     for obj in carros:
         obj.drawCar(textures,0, 2, 3, 4, 5)
         obj.update()
+        #Si la condición de la basura es 0 (buscando)
+        #pasar por la función buscaColision
         if obj.condition == 0:
             obj.buscaColision(basuras)
 
@@ -178,25 +178,21 @@ def Texturas(filepath):
 Init()
 while not done:
     for event in pygame.event.get():
-        
-        
+        Theta = 0.0
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                if Theta > 359.0:
-                    Theta = 0.0
-                else:
-                    Theta -= 1.0
-                LookAt()
+            if Theta > 359.0:
+                Theta = 0.0
+            elif Theta < 1.0:
+                Theta = 360.0
+            if event.key==pygame.K_RIGHT:
+                Theta += 1.0
             if event.key == pygame.K_LEFT:
-                if Theta < 1.0:
-                    Theta = 360.0
-                else:
-                    Theta += 1.0 
-                LookAt()
-              
+                Theta -= 1.0
+        
         elif event.type == pygame.QUIT:
             done = True
             
+        LookAt() 
         glLoadIdentity()
         gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
     
