@@ -569,6 +569,14 @@ class Carro:
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
+        
+        if self.condition == self.CARGADO:
+            # Calcula el ángulo para apuntar hacia el origen (0,0,0)
+            angle_to_origin = math.atan2(-self.Position[2], -self.Position[0]) * 180 / math.pi
+
+            # Aplica una rotación para que la parte delantera apunte hacia el origen
+            glRotatef(angle_to_origin, 0, 2, 0)
+        
         glRotatef(self.angulo, 0, 1, 0)
         glColor3f(1.0, 1.0, 1.0)
         #Activar texturas
