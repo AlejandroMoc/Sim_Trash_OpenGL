@@ -190,6 +190,118 @@ class Carro:
     def update(self):
         x,z = self.Position[0],self.Position[2]
         if self.condition == self.BUSCANDO:
+            
+            #Intentos raro de hacer que girase
+            # if self.id == 0:
+            #     for i in range(5):
+            #         #Primeros movimientos
+            #         if x < 200 and self.ZigzagDir[0] == 1:
+            #             next_move = (x + self.Direction[0], z)
+            #         elif x == 200 and self.ZigzagDir[0] == 1:
+            #             if (z == 0 - self.Direction[2]):
+            #                 return
+            #             else:
+            #                 next_move = (x, z + self.Direction[2])
+            #                 self.contadorSubida += 1
+            #                 if self.contadorSubida == 1:
+            #                     # self.angulo += 90
+            #                     # for i in range(1):
+            #                     #     self.angulo += 18
+            #                     self.angulo += 18
+            #                 if self.contadorSubida == 10:  
+            #                     self.ZigzagDir = [-1, 1]
+            #                     # self.angulo += 90
+            #                     # for i in range(1):
+            #                     #     self.angulo += 18
+            #                     self.angulo += 18
+            #                     self.contadorSubida = 0
+            #         #Segundos movimientos
+            #         elif x > 15 and self.ZigzagDir[0] == -1:
+            #             next_move = (x - self.Direction[0], z)
+            #         elif x == 15 and self.ZigzagDir[0] == -1:
+            #             if (z == 0 - self.Direction[2]):
+            #                 return
+            #             else:
+            #                 next_move = (x, z +  self.Direction[2])
+            #                 self.contadorSubida += 1
+            #                 if self.contadorSubida == 1:
+            #                     # self.angulo += 90
+            #                     # for i in range(1):
+            #                     #     self.angulo += 18
+            #                     self.angulo += 18
+            #                 if self.contadorSubida == 10:
+            #                     self.ZigzagDir = [1, 1]
+            #                     # self.angulo += 90
+            #                     # for i in range(1):
+            #                     #     self.angulo += 18
+            #                     self.angulo += 18
+            #                     self.contadorSubida = 0
+                                
+            #         self.Position[0] = next_move[0]
+            #         self.Position[2] = next_move[1]
+
+            # if self.id == 0:
+            #     #Primeros movimientos
+            #     if x < 200 and self.ZigzagDir[0] == 1:
+            #         next_move = (x + self.Direction[0], z)
+            #         self.Position[0] = next_move[0] 
+            #         self.Position[2] = next_move[1] 
+            #     elif x == 200 and self.ZigzagDir[0] == 1:
+            #         if (z == 0 - self.Direction[2]):
+            #             return
+            #         else:
+            #             next_move = (x, z + self.Direction[2])
+            #             self.contadorSubida += 1
+            #             if self.contadorSubida == 1:
+            #                 # self.angulo += 90
+            #                 for i in range(5):
+            #                     self.angulo += 18
+            #                     next_move = (x, z + self.Direction[2])
+            #                     self.Position[0] = next_move[0] 
+            #                     self.Position[2] = next_move[1]
+                                
+            #             if self.contadorSubida == 10:  
+            #                 self.ZigzagDir = [-1, 1]
+            #                 # self.angulo += 90
+                           
+            #                 for i in range(5):
+            #                     self.angulo += 18
+            #                     next_move = (x, z + self.Direction[2])
+            #                     self.Position[0] = next_move[0] 
+            #                     self.Position[2] = next_move[1] 
+            #                 self.contadorSubida = 0
+                            
+            #     #Segundos movimientos
+            #     elif x > 15 and self.ZigzagDir[0] == -1:
+            #         next_move = (x - self.Direction[0], z)
+            #         self.Position[0] = next_move[0] 
+            #         self.Position[2] = next_move[1] 
+            #     elif x == 15 and self.ZigzagDir[0] == -1:
+            #         if (z == 0 - self.Direction[2]):
+            #             return
+            #         else:
+            #             next_move = (x, z +  self.Direction[2])
+            #             self.contadorSubida += 1
+            #             if self.contadorSubida == 1:
+            #                 # self.angulo += 90
+            #                 for i in range(5):
+            #                     self.angulo += 18
+            #                     next_move = (x, z +  self.Direction[2])
+            #                     self.Position[0] = next_move[0] 
+            #                     self.Position[2] = next_move[1]
+                                
+            #             if self.contadorSubida == 10:
+            #                 self.ZigzagDir = [1, 1]
+                            
+            #                 # self.angulo += 90
+            #                 for i in range(5):
+            #                     self.angulo += 18
+            #                     next_move = (x, z +  self.Direction[2])
+            #                     self.Position[0] = next_move[0] 
+            #                     self.Position[2] = next_move[1] 
+            #                 self.contadorSubida = 0
+
+            #Primer carro
             if self.id == 0:
                 #Primeros movimientos
                 if x < 200 and self.ZigzagDir[0] == 1:
@@ -232,7 +344,7 @@ class Carro:
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
 
-            
+            #Segundo Carro
             elif self.id == 1:  
                 #Primeros movimientos
                 if x < -15 and self.ZigzagDir[0] == 1:
@@ -274,7 +386,8 @@ class Carro:
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0]
                 self.Position[2] = next_move[1]
-                
+            
+            #Tercer carro
             elif self.id == 2:
                 #Primeros movimientos
                 if x > 15 and self.ZigzagDir[0] == 1:
@@ -316,7 +429,8 @@ class Carro:
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
-                
+            
+            #Cuarto carro
             elif self.id == 3:
                 #Primeros movimientos
                 if x < -15 and self.ZigzagDir[0] == 1:
@@ -350,6 +464,8 @@ class Carro:
                             # self.angulo -= 90
                             for i in range(5):
                                 self.angulo -= 18
+                                # pygame.display.flip()
+                                # pygame.time.wait(10)
                         if self.contadorSubida == 10:
                             self.ZigzagDir = [1, 1]
                             # self.angulo -= 90
@@ -448,7 +564,7 @@ class Carro:
         glVertex3f(x4, y4, z4)
         glEnd()
 
-    def drawCar(self,textura, id, id2, id3, id4, id5):
+    def drawCar(self,textura,id, id2, id3, id4, id5):
         
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
