@@ -43,11 +43,19 @@ DimBoard = 200
 pygame.init()
 
 carros = []
-ncarros = 5
+ncarros = 4
 
 basuras = []
 nbasuras = 10
 
+robotpositions=[
+    (DimBoard,-DimBoard),
+    (-DimBoard,-DimBoard),
+    (DimBoard,DimBoard),
+    (-DimBoard,DimBoard)
+
+]
+        
 textures = []
 filename1 = "metalAmarillo.bmp"
 filename2 = "cemento.bmp"
@@ -116,7 +124,7 @@ def Init():
     Texturas(filename7)
     
     for i in range(ncarros):
-        carros.append(Carro(DimBoard, 2.0))
+        carros.append(Carro(DimBoard, 1.0, robotpositions[i], i))
     for i in range(nbasuras):
         basuras.append(Basura(DimBoard))
         
@@ -147,7 +155,8 @@ def display():
     for obj in carros:
         obj.drawCar(textures,0, 2, 3, 4, 5)
         obj.update()
-        obj.buscaColision(basuras)
+        if obj.condition == 0:
+            obj.buscaColision(basuras)
 
 done = False
 

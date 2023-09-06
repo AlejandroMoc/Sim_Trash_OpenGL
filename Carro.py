@@ -7,9 +7,14 @@ from OpenGL.GLUT import *
 import random
 import math
 
+def distancia_entre_puntos(p1, p2):
+    return math.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)
+
 class Basura:
+    RECOLECTADA = 0
+    TIRADA = 1
     def __init__(self, dim):
-        self.radio = 5.0
+        self.radio = 7.0
         self.Position = [0.0, 2.0, 0.0]
         #Se inicializa las coordenadas de los vertices del cubo
         self.vertexCoords = [  
@@ -30,7 +35,8 @@ class Basura:
         #Se inicializa una posicion aleatoria en el tablero
         self.Position[0] = random.randint(-self.DimBoard, self.DimBoard)
         self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
-    
+        self.condition = self.TIRADA
+        
     #AQUI CAMBIAR ESTE
     def draw(self):
         glPushMatrix()
@@ -106,10 +112,16 @@ class Basura:
     #     glPopMatrix()
     #     glPopMatrix()
 
-    def update(self):
-        self.Position[0] = 0.0
-        self.Position[2] = 0.0
+    def update(self, pos):
+        self.Position[0] = pos[0]
+        self.Position[1] = pos[1] + 13.0
+        self.Position[2] = pos[2]
 
+    def centrar(self):
+        self.Position[0] = 0.0
+        self.Position[1] = 2.0
+        self.Position[2] = 0.0
+        
 class Cilindro:
     def __init__(self, radio, altura, slices=30, stacks=30):
         self.radio = radio
@@ -138,82 +150,263 @@ class Cilindro:
         glPopMatrix()
 
 class Carro:
-    
-    def __init__(self, dim, vel):
-        self.radio = 5.0
+    BUSCANDO = 0
+    CARGADO = 1
+    REGRESANDO = 2
+    def __init__(self, dim, vel, pos, id):
+        self.id = id
+        self.condition = self.BUSCANDO
+        self.radio = 7.0
         self.Position = [0.0, 5.0, 0.0]
         self.Direction = [0.0, 5.0, 0.0]
         self.cilindro = Cilindro(radio=0.5, altura=0.5)
 
-        #Se inicializa las coordenadas de los vertices del cubo
-        self.vertexCoords = [  
-                   1,1,1,   1,1,-1,   1,-1,-1,   1,-1,1,
-                  -1,1,1,  -1,1,-1,  -1,-1,-1,  -1,-1,1 ]
-        
-        #Vertice de los diferentes colores
-        self.vertexColors = [ 
-                   1,1,1,   1,0,0,   1,1,0,   0,1,0,
-                   0,0,1,   1,0,1,   0,0,0,   0,1,1 ]
-
-        self.elementArray = [
-                  0,1,2,3, 0,3,7,4, 0,4,5,1,
-                  6,2,1,5, 6,5,4,7, 6,7,3,2 ]
-        
-    
         self.DimBoard = dim
-        #Se inicializa una posicion aleatoria en el tablero
-        self.Position[0] = random.randint(-self.DimBoard, self.DimBoard)
-        self.Position[2] = random.randint(-self.DimBoard, self.DimBoard)
         
-        #Inicializar las coordenadas (x,y,z) del cubo en el tablero
-        #almacenandolas en el vector Position
-        #...
-        #Se inicializa un vector de direccion aleatorio
-        self.Direction[0] = random.randint(-self.DimBoard, self.DimBoard)
-        self.Direction[1] = random.randint(-self.DimBoard, self.DimBoard)
-        self.Direction[2] = random.randint(-self.DimBoard, self.DimBoard)
-        #El vector aleatorio debe de estar sobre el plano XZ (la altura en Y debe ser fija)
-        #Se normaliza el vector de direccion
-        m = math.sqrt(self.Direction[0]*self.Direction[0] + self.Direction[1]*self.Direction[1] + self.Direction[2]*self.Direction[2])
-        self.Direction[0] /= m
-        self.Direction[1] /= m
-        self.Direction[2] /= m
-        #...
-        #Se cambia la maginitud del vector direccion con la variable vel
-        #...
+        #Ultima basura encontrada
+        self.basuraPos = None
+        self.basura = None
+                
+        self.Position[0] = pos[0]
+        self.Position[2] = pos[1]
+
+        self.Direction[0] = 1.0
+        self.Direction[1] = 0.0
+        self.Direction[2] = 1.0
+
         self.Direction[0] *= vel
         self.Direction[1] *= vel
         self.Direction[2] *= vel
-
+        
+        self.ZigzagDir = [1,1]
+        self.contadorSubida = 0
+        
+        if self.id == 0:
+            self.angulo = 90
+        elif self.id == 1:
+            self.angulo = 90
+        elif self.id == 2:
+            self.angulo = -90
+        elif self.id == 3:
+            self.angulo = 90
+        else:
+            self.angulo = 0
+            
+        self.AlturaPlataforma = -1.5
+        
     def update(self):
-        #Se debe de calcular la posible nueva posicion del cubo a partir de su
-        #posicion acutual (Position) y el vector de direccion (Direction)
-        #...
+        x,z = self.Position[0],self.Position[2]
+        if self.condition == self.BUSCANDO:
+            if self.id == 0:
+                #Primeros movimientos
+                if x < 200 and self.ZigzagDir[0] == 1:
+                    next_move = (x + self.Direction[0], z)
+                elif x == 200 and self.ZigzagDir[0] == 1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z + self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:  
+                            self.ZigzagDir = [-1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                #Segundos movimientos
+                elif x > 0 and self.ZigzagDir[0] == -1:
+                    next_move = (x - self.Direction[0], z)
+                elif x == 0 and self.ZigzagDir[0] == -1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z +  self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:
+                            self.ZigzagDir = [1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                self.Position[0] = next_move[0] 
+                self.Position[2] = next_move[1] 
+                
+            elif self.id == 1:  
+                #Primeros movimientos
+                if x < 0 and self.ZigzagDir[0] == 1:
+                    next_move = (x + self.Direction[0], z)
+                elif x == 0 and self.ZigzagDir[0] == 1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z + self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:  
+                            self.ZigzagDir = [-1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                #Segundos movimientos
+                elif x > -200 and self.ZigzagDir[0] == -1:
+                    next_move = (x - self.Direction[0], z)
+                elif x == -200 and self.ZigzagDir[0] == -1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z + self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:  
+                            self.ZigzagDir = [1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                self.Position[0] = next_move[0]
+                self.Position[2] = next_move[1]
+                
+            elif self.id == 2:
+                #Primeros movimientos
+                if x > 0 and self.ZigzagDir[0] == 1:
+                    next_move = (x - self.Direction[0], z)
+                elif x == 0 and self.ZigzagDir[0] == 1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z - self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:  
+                            self.ZigzagDir = [-1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                #Segundos movimientos
+                elif x < 200 and self.ZigzagDir[0] == -1:
+                    next_move = (x + self.Direction[0], z)
+                elif x == 200 and self.ZigzagDir[0] == -1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z - self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:
+                            self.ZigzagDir = [1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                self.Position[0] = next_move[0] 
+                self.Position[2] = next_move[1] 
+                
+            elif self.id == 3:
+                #Primeros movimientos
+                if x < 0 and self.ZigzagDir[0] == 1:
+                    next_move = (x + self.Direction[0], z)
+                elif x == 0 and self.ZigzagDir[0] == 1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z - self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo += 90
+                        if self.contadorSubida == 10:  
+                            self.ZigzagDir = [-1, 1]
+                            self.angulo += 90
+                            self.contadorSubida = 0
+                #Segundos movimientos
+                elif x > -200 and self.ZigzagDir[0] == -1:
+                    next_move = (x - self.Direction[0], z)
+                elif x == -200 and self.ZigzagDir[0] == -1:
+                    if (z == 0 - self.Direction[2]):
+                        return
+                    else:
+                        next_move = (x, z - self.Direction[2])
+                        self.contadorSubida += 1
+                        if self.contadorSubida == 1:
+                            self.angulo -= 90
+                        if self.contadorSubida == 10:
+                            self.ZigzagDir = [1, 1]
+                            self.angulo -= 90
+                            self.contadorSubida = 0
+                self.Position[0] = next_move[0] 
+                self.Position[2] = next_move[1] 
+            else:
+                new_x = self.Position[0] + self.Direction[0]
+                new_z = self.Position[2] + self.Direction[2]
+
+                #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
+
+                if (abs(new_x) <= self.DimBoard):
+                    self.Position[0] = new_x
+                else: 
+                    self.Direction[0] *= -1.0
+                    self.Position[0] += self.Direction[0]
+                
+
+                if (abs(new_z) <= self.DimBoard):
+                    self.Position[2] = new_z
+                else: 
+                    self.Direction[2] *= -1.0
+                    self.Position[2] += self.Direction[2]
+            
+            #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
         
-        #Se debe verificar que el objeto cubo, con su nueva posible direccion
-        #no se salga del plano actual (DimBoard)
-        #...
-    
-        new_x = self.Position[0] + self.Direction[0]
-        new_z = self.Position[2] + self.Direction[2]
+        elif self.condition == self.CARGADO:            
+            centro = (0,0)
+            mejor_movimiento = None
+            mejor_distancia = float('inf')  # Inicializar con un valor muy grande
+            posiblemovs = [
+                (x + self.Direction[0], z),
+                (x + self.Direction[0], z + self.Direction[2]),
+                (x, z + self.Direction[2]),
+                (x - self.Direction[0], z + self.Direction[2]),
+                (x - self.Direction[0], z),
+                (x - self.Direction[0], z - self.Direction[2]),
+                (x, z - self.Direction[2]),
+                (x + self.Direction[0], z - self.Direction[2])
+            ]
+            for movim in posiblemovs:
+                distancia = distancia_entre_puntos(movim, centro)
+                if distancia < mejor_distancia:
+                    mejor_distancia = distancia
+                    mejor_movimiento = movim
+                    
+            next_move = mejor_movimiento
+            self.Position[0] = next_move[0]
+            self.Position[2] = next_move[1]
+            self.basura.update((self.Position[0],self.AlturaPlataforma,self.Position[2] + 7.0))
+            if next_move == centro:
+                self.basura.centrar()
+                self.condition = self.REGRESANDO
+                self.AlturaPlataforma -= 1.0
 
-        #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
 
-        if (abs(new_x) <= self.DimBoard):
-            self.Position[0] = new_x
-        else: 
-            self.Direction[0] *= -1.0
-            self.Position[0] += self.Direction[0]
-        
-
-        if (abs(new_z) <= self.DimBoard):
-            self.Position[2] = new_z
-        else: 
-            self.Direction[2] *= -1.0
-            self.Position[2] += self.Direction[2]
-        
-        #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
-
+        elif self.condition == self.REGRESANDO:
+            mejor_movimiento = None
+            mejor_distancia = float('inf')  # Inicializar con un valor muy grande
+            posiblemovs = [
+                (x + self.Direction[0], z),
+                (x + self.Direction[0], z + self.Direction[2]),
+                (x, z + self.Direction[2]),
+                (x - self.Direction[0], z + self.Direction[2]),
+                (x - self.Direction[0], z),
+                (x - self.Direction[0], z - self.Direction[2]),
+                (x, z - self.Direction[2]),
+                (x + self.Direction[0], z - self.Direction[2])
+            ]
+            for movim in posiblemovs:
+                distancia = distancia_entre_puntos(movim, self.basuraPos)
+                if distancia < mejor_distancia:
+                    mejor_distancia = distancia
+                    mejor_movimiento = movim
+            next_move = mejor_movimiento
+            self.Position[0] = next_move[0]
+            self.Position[2] = next_move[1]
+            if next_move == self.basuraPos:
+                self.condition = self.BUSCANDO
+                
     def drawFace(self, x1,  y1, z1, x2, y2, z2,x3, y3, z3,x4,  y4,  z4):
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)
@@ -227,27 +420,12 @@ class Carro:
         glTexCoord2f(1.0, 0.0)
         glVertex3f(x4, y4, z4)
         glEnd()
-        
-    # Dibujado base
-    # def draw(self):
-    #     glPushMatrix()
-    #     glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-    #     glScaled(5,5,5)
-    #     #Se dibuja el cubo
-    #     #...
-    #     glEnableClientState(GL_VERTEX_ARRAY)
-    #     glEnableClientState(GL_COLOR_ARRAY)
-    #     glVertexPointer(3, GL_FLOAT, 0, self.vertexCoords)
-    #     glColorPointer(3, GL_FLOAT, 0, self.vertexColors)
-    #     glDrawElements(GL_QUADS,24,GL_UNSIGNED_INT,self.elementArray)
-    #     glDisableClientState(GL_VERTEX_ARRAY)
-    #     glDisableClientState(GL_COLOR_ARRAY)
-    #     glPopMatrix()
 
     def drawCar(self,textura,id, id2, id3, id4, id5):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
+        glRotatef(self.angulo, 0, 1, 0)
         glColor3f(1.0, 1.0, 1.0)
         #Activar texturas
         glEnable(GL_TEXTURE_2D)
@@ -266,17 +444,17 @@ class Carro:
         # Arriba
         glBindTexture(GL_TEXTURE_2D, textura[id4])
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
-         # Dibujar cubo a la derecha
+         # Dibujar cilindro a la derecha
         glDisable(GL_TEXTURE_2D)
         glPushMatrix()
         glColor3f(0.0,0.0,0.0)
-        glTranslatef(1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la derecha
+        glTranslatef(1.5, 0.0, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
-        # Dibujar cubo a la izquierda
+        # Dibujar cilindro a la izquierda
         glPushMatrix()
-        glTranslatef(-1.5, 0.0, 0.0)  # Ajusta la traslación para el cubo a la izquierda
+        glTranslatef(-1.5, 0.0, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
@@ -302,13 +480,27 @@ class Carro:
         glBindTexture(GL_TEXTURE_2D, textura[id4])
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
         glPopMatrix()
+        #plataforma
+        glPushMatrix()
+        glTranslatef(0.0, self.AlturaPlataforma, 2.0)
+        glBindTexture(GL_TEXTURE_2D, textura[id])
+        self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
+        glDisable(GL_TEXTURE_2D)
         glPopMatrix()
-    
+        glPopMatrix()
+
+        
     def buscaColision(self,basuras):
         for basura in basuras:  
             dx = self.Position[0] - basura.Position[0]
             dz = self.Position[2] - basura.Position[2]
             distancia = math.sqrt(dx*dx + dz*dz)
-            if distancia < self.radio + basura.radio:
-                print("Encontrado")
-                basura.update()
+            if distancia < self.radio + basura.radio and basura.condition == basura.TIRADA:
+                self.condition = self.CARGADO
+                self.basuraPos = (self.Position[0], self.Position[2])
+                basura.condition = basura.RECOLECTADA
+                self.basura = basura
+                self.AlturaPlataforma += 1.0
+
+
+
