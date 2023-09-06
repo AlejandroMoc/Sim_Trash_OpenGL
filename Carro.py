@@ -9,6 +9,7 @@ import math
 
 class Basura:
     def __init__(self, dim):
+        self.radio = 5.0
         self.Position = [0.0, 2.0, 0.0]
         #Se inicializa las coordenadas de los vertices del cubo
         self.vertexCoords = [  
@@ -105,6 +106,9 @@ class Basura:
     #     glPopMatrix()
     #     glPopMatrix()
 
+    def update(self):
+        self.Position[0] = 0.0
+        self.Position[2] = 0.0
 
 class Cilindro:
     def __init__(self, radio, altura, slices=30, stacks=30):
@@ -136,6 +140,7 @@ class Cilindro:
 class Carro:
     
     def __init__(self, dim, vel):
+        self.radio = 5.0
         self.Position = [0.0, 5.0, 0.0]
         self.Direction = [0.0, 5.0, 0.0]
         self.cilindro = Cilindro(radio=0.5, altura=0.5)
@@ -298,3 +303,12 @@ class Carro:
         self.drawFace(-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0)
         glPopMatrix()
         glPopMatrix()
+    
+    def buscaColision(self,basuras):
+        for basura in basuras:  
+            dx = self.Position[0] - basura.Position[0]
+            dz = self.Position[2] - basura.Position[2]
+            distancia = math.sqrt(dx*dx + dz*dz)
+            if distancia < self.radio + basura.radio:
+                print("Encontrado")
+                basura.update()

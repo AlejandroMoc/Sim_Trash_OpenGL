@@ -147,7 +147,7 @@ def display():
     for obj in carros:
         obj.drawCar(textures,0, 2, 3, 4, 5)
         obj.update()
-
+        obj.buscaColision(basuras)
 
 done = False
 
