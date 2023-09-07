@@ -65,16 +65,19 @@ filename6 = "carroPuerta.bmp"
 filename7 = "basura.bmp"
 Theta  = 0
 Direction = [300.0,200.0,300.0]
+ELEVATION_ANGLE = 0.0
 
 def DegToRad(g):
     return ((g*math.pi)/180.0)
 
-def LookAt():
-    global EYE_X, EYE_Z
+def LookAt(vertical):
+    global EYE_X, EYE_Y, EYE_Z
     radius = math.sqrt((EYE_X - CENTER_X)**2 + (EYE_Z - CENTER_Z)**2)
     new_angle = math.atan2(EYE_Z - CENTER_Z, EYE_X - CENTER_X) + math.radians(Theta)
     EYE_X = CENTER_X + radius * math.cos(new_angle)
     EYE_Z = CENTER_Z + radius * math.sin(new_angle)
+    if vertical:
+        EYE_Y = CENTER_Y + radius * math.sin(math.radians(ELEVATION_ANGLE))
     
 def Axis():
     glShadeModel(GL_FLAT)
@@ -179,6 +182,8 @@ def Texturas(filepath):
 Init()
 while not done:
     for event in pygame.event.get():
+        #Habilitar cambios verticales en la camara
+        vertical = False
         Theta = 0.0
         if event.type == pygame.KEYDOWN:
             if Theta > 359.0:
@@ -189,11 +194,16 @@ while not done:
                 Theta += 1.0
             if event.key == pygame.K_LEFT:
                 Theta -= 1.0
-        
+            elif event.key == pygame.K_UP:
+                ELEVATION_ANGLE += 1.0
+                vertical = True
+            elif event.key == pygame.K_DOWN:
+                ELEVATION_ANGLE -= 1.0
+                vertical = True
         elif event.type == pygame.QUIT:
             done = True
             
-        LookAt() 
+        LookAt(vertical) 
         glLoadIdentity()
         gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
     

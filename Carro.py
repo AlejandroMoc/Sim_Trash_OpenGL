@@ -34,16 +34,21 @@ class Cilindro:
         gluDisk(quadric, 0.0, self.radio, self.slices, 1)
         glPopMatrix()
 
-        gluDeleteQuadric(quadric)
+        glPushMatrix()
+        glRotatef(180, 1.0, 0.0, 0.0)  # Rotar 180 grados alrededor del eje X
+        gluDisk(quadric, 0.0, self.radio, self.slices, 1)  # Dibuja la tapa inferior
         glPopMatrix()
 
+        gluDeleteQuadric(quadric)
+        glPopMatrix()
+    
 class Basura:
     RECOLECTADA = 0
     TIRADA = 1
     def __init__(self, dim):
         self.angulo = 0
         self.radio = 7.0
-        self.Position = [0.0, 2.0, 0.0]
+        self.Position = [0.0, 5.0, 0.0]
         #Se inicializa las coordenadas de los vertices del cubo
         self.vertexCoords = [  
                    1,1,1,   1,1,-1,   1,-1,-1,   1,-1,1,
@@ -105,7 +110,7 @@ class Basura:
         
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-        glScaled(5,5,5)
+        glScaled(4,4,4)
         glRotatef(self.angulo, 0, 1, 0)
         glColor3f(1.0, 1.0, 1.0)
         
@@ -123,24 +128,27 @@ class Basura:
     
     def update(self, pos):
         self.Position[0] = pos[0]
-        self.Position[1] = pos[1] + 13.0
+        self.Position[1] = pos[1] + 12.0
         self.Position[2] = pos[2]
 
     def centrar(self):
         self.Position[0] = 0.0
-        self.Position[1] = 2.0
+        self.Position[1] = 5.0
         self.Position[2] = 0.0
 
 class Carro:
     BUSCANDO = 0
     CARGADO = 1
     REGRESANDO = 2
+    ELEVANDO = 3 
+    BAJANDO = 4
+    
     def __init__(self, dim, vel, pos, id):
         self.id = id
         self.condition = self.BUSCANDO
         self.radio = 7.0
-        self.Position = [0.0, 5.0, 0.0]
-        self.Direction = [0.0, 5.0, 0.0]
+        self.Position = [0.0, 7.0, 0.0]
+        self.Direction = [0.0, 7.0, 0.0]
         self.cilindro = Cilindro(radio=0.5, altura=0.5)
 
         self.DimBoard = dim
@@ -163,35 +171,27 @@ class Carro:
         self.ZigzagDir = [1,1]
         self.contadorSubida = 0
         
+        self.contadorPlataforma = 0
+        
         self.angulo = 0
         
         if self.id == 0:
-            # self.angulo = 90
-            for i in range(5):
-                self.angulo += 18
+            self.angulo = 90
         elif self.id == 1:
-            # self.angulo = 90
-            for i in range(5):
-                self.angulo += 18
+            self.angulo = 90
         elif self.id == 2:
-            # self.angulo = -90
-            self.angulo = 0
-            for i in range(5):
-                self.angulo -= 18
+            self.angulo = -90
         elif self.id == 3:
-            # self.angulo = 90
-            for i in range(5):
-                self.angulo += 18
+            self.angulo = 90
         else:
             self.angulo = 0
             
-        self.AlturaPlataforma = -1.5
-        
+        self.AlturaPlataforma = -1.9
+    
     def update(self):
         x,z = self.Position[0],self.Position[2]
         if self.condition == self.BUSCANDO:
-            
-            #Intentos raro de hacer que girase
+#Intentos raro de hacer que girase
             # if self.id == 0:
             #     for i in range(5):
             #         #Primeros movimientos
@@ -313,14 +313,10 @@ class Carro:
                         next_move = (x, z + self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                         if self.contadorSubida == 10:  
                             self.ZigzagDir = [-1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                             self.contadorSubida = 0
                 #Segundos movimientos
                 elif x > 15 and self.ZigzagDir[0] == -1:
@@ -332,14 +328,10 @@ class Carro:
                         next_move = (x, z +  self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                         if self.contadorSubida == 10:
                             self.ZigzagDir = [1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
@@ -356,14 +348,10 @@ class Carro:
                         next_move = (x, z + self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                         if self.contadorSubida == 10:  
                             self.ZigzagDir = [-1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                             self.contadorSubida = 0
                 #Segundos movimientos
                 elif x > -200 and self.ZigzagDir[0] == -1:
@@ -375,14 +363,10 @@ class Carro:
                         next_move = (x, z + self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                         if self.contadorSubida == 10:  
                             self.ZigzagDir = [1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0]
                 self.Position[2] = next_move[1]
@@ -399,14 +383,10 @@ class Carro:
                         next_move = (x, z - self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                         if self.contadorSubida == 10:  
                             self.ZigzagDir = [-1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo -= 90
                             self.contadorSubida = 0
                 #Segundos movimientos
                 elif x < 200 and self.ZigzagDir[0] == -1:
@@ -418,14 +398,10 @@ class Carro:
                         next_move = (x, z - self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                         if self.contadorSubida == 10:
                             self.ZigzagDir = [1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
@@ -442,14 +418,10 @@ class Carro:
                         next_move = (x, z - self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                         if self.contadorSubida == 10:  
                             self.ZigzagDir = [-1, 1]
-                            # self.angulo += 90
-                            for i in range(5):
-                                self.angulo += 18
+                            self.angulo += 90
                             self.contadorSubida = 0
                 #Segundos movimientos
                 elif x > -200 and self.ZigzagDir[0] == -1:
@@ -461,24 +433,17 @@ class Carro:
                         next_move = (x, z - self.Direction[2])
                         self.contadorSubida += 1
                         if self.contadorSubida == 1:
-                            # self.angulo -= 90
-                            for i in range(5):
-                                self.angulo -= 18
-                                # pygame.display.flip()
-                                # pygame.time.wait(10)
+                            self.angulo -= 90
                         if self.contadorSubida == 10:
                             self.ZigzagDir = [1, 1]
-                            # self.angulo -= 90
-                            for i in range(5):
-                                self.angulo -= 18
+                            self.angulo -= 90
                             self.contadorSubida = 0
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
+            
             else:
                 new_x = self.Position[0] + self.Direction[0]
                 new_z = self.Position[2] + self.Direction[2]
-
-                #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
 
                 if (abs(new_x) <= self.DimBoard):
                     self.Position[0] = new_x
@@ -492,9 +457,25 @@ class Carro:
                 else: 
                     self.Direction[2] *= -1.0
                     self.Position[2] += self.Direction[2]
-            
-            #print ("(X =", self.Position[0], ", Z =", self.Position[2],")")
-        
+                    
+        elif self.condition == self.ELEVANDO:            
+            if self.contadorPlataforma < 40:
+                self.contadorPlataforma += 1
+                self.AlturaPlataforma += 0.025
+                self.basura.update((self.basura.Position[0],self.AlturaPlataforma - 1.0,self.basura.Position[2]))
+            else:
+                self.condition = self.CARGADO
+                
+        elif self.condition == self.BAJANDO:            
+            if self.contadorPlataforma > 0:
+                self.contadorPlataforma -= 1
+                self.AlturaPlataforma -= 0.025
+                self.basura.update((self.Position[0],self.AlturaPlataforma,self.Position[2]))
+            else:
+                self.condition = self.REGRESANDO
+                self.contadorPlataforma = 0
+                self.basura.centrar()
+                
         elif self.condition == self.CARGADO:            
             centro = (0,0)
             mejor_movimiento = None
@@ -516,14 +497,24 @@ class Carro:
                     mejor_movimiento = movim
                     
             next_move = mejor_movimiento
+            # Determina la dirección del movimiento en base a next_move y self.Position
+            dx = next_move[0] - self.Position[0]
+            dz = next_move[1] - self.Position[2]
+        
+            if dx != 0:
+                dx /= abs(dx)
+                dx *= 5
+            if dz != 0:
+                dz /= abs(dz)
+                dz *= 5
+            
+            # Actualiza self.Position
             self.Position[0] = next_move[0]
             self.Position[2] = next_move[1]
-            #Sospecho que es aquí donde se eleva la basura a la plataforma (CONFIRMAR)
-            self.basura.update((self.Position[0],self.AlturaPlataforma,self.Position[2] + 7.0))
+            #Se cambia el estado del agente para elevar la basura
+            self.basura.update((self.Position[0] + dx,self.AlturaPlataforma,self.Position[2] + dz))
             if next_move == centro:
-                self.basura.centrar()
-                self.condition = self.REGRESANDO
-                self.AlturaPlataforma -= 1.0
+                self.condition = self.BAJANDO
 
 
         elif self.condition == self.REGRESANDO:
@@ -564,6 +555,8 @@ class Carro:
         glVertex3f(x4, y4, z4)
         glEnd()
 
+
+
     def drawCar(self,textura,id, id2, id3, id4, id5):
         
         glPushMatrix()
@@ -572,10 +565,10 @@ class Carro:
         
         if self.condition == self.CARGADO:
             # Calcula el ángulo para apuntar hacia el origen (0,0,0)
-            angle_to_origin = math.atan2(-self.Position[2], -self.Position[0]) * 180 / math.pi
+            anguloOrigen = math.atan2(-self.Position[2], -self.Position[0]) * 180 / math.pi
 
             # Aplica una rotación para que la parte delantera apunte hacia el origen
-            glRotatef(angle_to_origin, 0, 1, 0)
+            glRotatef(anguloOrigen, 0, 1, 0)
         
         glRotatef(self.angulo, 0, 1, 0)
         glColor3f(1.0, 1.0, 1.0)
@@ -601,14 +594,14 @@ class Carro:
         # Dibujar cilindro a la derecha
         glPushMatrix()
         glColor3f(0.0,0.0,0.0)
-        glTranslatef(1.0, 0.0, 0.0)  
+        glTranslatef(1.0, -0.85, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
         
         # Dibujar cilindro a la izquierda
         glPushMatrix()
-        glTranslatef(-1.5, 0.0, 0.0)  
+        glTranslatef(-1.5, -0.85, 0.0)  
         glRotatef(90,0,1,0)
         self.cilindro.draw()
         glPopMatrix()
@@ -651,8 +644,7 @@ class Carro:
             dz = self.Position[2] - basura.Position[2]
             distancia = math.sqrt(dx*dx + dz*dz)
             if distancia < self.radio + basura.radio and basura.condition == basura.TIRADA:
-                self.condition = self.CARGADO
+                self.condition = self.ELEVANDO
                 self.basuraPos = (self.Position[0], self.Position[2])
                 basura.condition = basura.RECOLECTADA
                 self.basura = basura
-                self.AlturaPlataforma += 1.0
