@@ -174,6 +174,7 @@ class Carro:
         self.contadorPlataforma = 0
         
         self.angulo = 0
+        self.ultimoAngulo = self.angulo
         
         if self.id == 0:
             self.angulo = 90
@@ -191,122 +192,13 @@ class Carro:
     def update(self):
         x,z = self.Position[0],self.Position[2]
         if self.condition == self.BUSCANDO:
-#Intentos raro de hacer que girase
-            # if self.id == 0:
-            #     for i in range(5):
-            #         #Primeros movimientos
-            #         if x < 200 and self.ZigzagDir[0] == 1:
-            #             next_move = (x + self.Direction[0], z)
-            #         elif x == 200 and self.ZigzagDir[0] == 1:
-            #             if (z == 0 - self.Direction[2]):
-            #                 return
-            #             else:
-            #                 next_move = (x, z + self.Direction[2])
-            #                 self.contadorSubida += 1
-            #                 if self.contadorSubida == 1:
-            #                     # self.angulo += 90
-            #                     # for i in range(1):
-            #                     #     self.angulo += 18
-            #                     self.angulo += 18
-            #                 if self.contadorSubida == 10:  
-            #                     self.ZigzagDir = [-1, 1]
-            #                     # self.angulo += 90
-            #                     # for i in range(1):
-            #                     #     self.angulo += 18
-            #                     self.angulo += 18
-            #                     self.contadorSubida = 0
-            #         #Segundos movimientos
-            #         elif x > 15 and self.ZigzagDir[0] == -1:
-            #             next_move = (x - self.Direction[0], z)
-            #         elif x == 15 and self.ZigzagDir[0] == -1:
-            #             if (z == 0 - self.Direction[2]):
-            #                 return
-            #             else:
-            #                 next_move = (x, z +  self.Direction[2])
-            #                 self.contadorSubida += 1
-            #                 if self.contadorSubida == 1:
-            #                     # self.angulo += 90
-            #                     # for i in range(1):
-            #                     #     self.angulo += 18
-            #                     self.angulo += 18
-            #                 if self.contadorSubida == 10:
-            #                     self.ZigzagDir = [1, 1]
-            #                     # self.angulo += 90
-            #                     # for i in range(1):
-            #                     #     self.angulo += 18
-            #                     self.angulo += 18
-            #                     self.contadorSubida = 0
-                                
-            #         self.Position[0] = next_move[0]
-            #         self.Position[2] = next_move[1]
 
-            # if self.id == 0:
-            #     #Primeros movimientos
-            #     if x < 200 and self.ZigzagDir[0] == 1:
-            #         next_move = (x + self.Direction[0], z)
-            #         self.Position[0] = next_move[0] 
-            #         self.Position[2] = next_move[1] 
-            #     elif x == 200 and self.ZigzagDir[0] == 1:
-            #         if (z == 0 - self.Direction[2]):
-            #             return
-            #         else:
-            #             next_move = (x, z + self.Direction[2])
-            #             self.contadorSubida += 1
-            #             if self.contadorSubida == 1:
-            #                 # self.angulo += 90
-            #                 for i in range(5):
-            #                     self.angulo += 18
-            #                     next_move = (x, z + self.Direction[2])
-            #                     self.Position[0] = next_move[0] 
-            #                     self.Position[2] = next_move[1]
-                                
-            #             if self.contadorSubida == 10:  
-            #                 self.ZigzagDir = [-1, 1]
-            #                 # self.angulo += 90
-                           
-            #                 for i in range(5):
-            #                     self.angulo += 18
-            #                     next_move = (x, z + self.Direction[2])
-            #                     self.Position[0] = next_move[0] 
-            #                     self.Position[2] = next_move[1] 
-            #                 self.contadorSubida = 0
-                            
-            #     #Segundos movimientos
-            #     elif x > 15 and self.ZigzagDir[0] == -1:
-            #         next_move = (x - self.Direction[0], z)
-            #         self.Position[0] = next_move[0] 
-            #         self.Position[2] = next_move[1] 
-            #     elif x == 15 and self.ZigzagDir[0] == -1:
-            #         if (z == 0 - self.Direction[2]):
-            #             return
-            #         else:
-            #             next_move = (x, z +  self.Direction[2])
-            #             self.contadorSubida += 1
-            #             if self.contadorSubida == 1:
-            #                 # self.angulo += 90
-            #                 for i in range(5):
-            #                     self.angulo += 18
-            #                     next_move = (x, z +  self.Direction[2])
-            #                     self.Position[0] = next_move[0] 
-            #                     self.Position[2] = next_move[1]
-                                
-            #             if self.contadorSubida == 10:
-            #                 self.ZigzagDir = [1, 1]
-                            
-            #                 # self.angulo += 90
-            #                 for i in range(5):
-            #                     self.angulo += 18
-            #                     next_move = (x, z +  self.Direction[2])
-            #                     self.Position[0] = next_move[0] 
-            #                     self.Position[2] = next_move[1] 
-            #                 self.contadorSubida = 0
-
-            #Primer carro
+            #Primer carro (+x,-z)
             if self.id == 0:
                 #Primeros movimientos
                 if x < 200 and self.ZigzagDir[0] == 1:
                     next_move = (x + self.Direction[0], z)
-                elif x == 200 and self.ZigzagDir[0] == 1:
+                elif x <= 200 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -319,9 +211,9 @@ class Carro:
                             self.angulo -= 90
                             self.contadorSubida = 0
                 #Segundos movimientos
-                elif x > 15 and self.ZigzagDir[0] == -1:
+                elif x > 10 and self.ZigzagDir[0] == -1:
                     next_move = (x - self.Direction[0], z)
-                elif x == 15 and self.ZigzagDir[0] == -1:
+                elif x <= 10 and self.ZigzagDir[0] == -1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -336,12 +228,12 @@ class Carro:
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
 
-            #Segundo Carro
+            #Segundo Carro (-x, -z)
             elif self.id == 1:  
                 #Primeros movimientos
-                if x < -15 and self.ZigzagDir[0] == 1:
+                if x < -10 and self.ZigzagDir[0] == 1:
                     next_move = (x + self.Direction[0], z)
-                elif x == -15 and self.ZigzagDir[0] == 1:
+                elif x == -10 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -371,12 +263,12 @@ class Carro:
                 self.Position[0] = next_move[0]
                 self.Position[2] = next_move[1]
             
-            #Tercer carro
+            #Tercer carro (+x, +z)
             elif self.id == 2:
                 #Primeros movimientos
-                if x > 15 and self.ZigzagDir[0] == 1:
+                if x > 10 and self.ZigzagDir[0] == 1:
                     next_move = (x - self.Direction[0], z)
-                elif x == 15 and self.ZigzagDir[0] == 1:
+                elif x == 10 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -406,12 +298,12 @@ class Carro:
                 self.Position[0] = next_move[0] 
                 self.Position[2] = next_move[1] 
             
-            #Cuarto carro
+            #Cuarto carro (-x, +z)
             elif self.id == 3:
                 #Primeros movimientos
-                if x < -15 and self.ZigzagDir[0] == 1:
+                if x < -10 and self.ZigzagDir[0] == 1:
                     next_move = (x + self.Direction[0], z)
-                elif x == -15 and self.ZigzagDir[0] == 1:
+                elif x == -10 and self.ZigzagDir[0] == 1:
                     if (z == 0 - self.Direction[2]):
                         return
                     else:
@@ -457,7 +349,8 @@ class Carro:
                 else: 
                     self.Direction[2] *= -1.0
                     self.Position[2] += self.Direction[2]
-                    
+            self.ultimoAngulo = self.angulo
+            
         elif self.condition == self.ELEVANDO:            
             if self.contadorPlataforma < 40:
                 self.contadorPlataforma += 1
@@ -477,27 +370,20 @@ class Carro:
                 self.basura.centrar()
                 
         elif self.condition == self.CARGADO:            
-            centro = (0,0)
-            mejor_movimiento = None
-            mejor_distancia = float('inf')  # Inicializar con un valor muy grande
-            posiblemovs = [
-                (x + self.Direction[0], z),
-                (x + self.Direction[0], z + self.Direction[2]),
-                (x, z + self.Direction[2]),
-                (x - self.Direction[0], z + self.Direction[2]),
-                (x - self.Direction[0], z),
-                (x - self.Direction[0], z - self.Direction[2]),
-                (x, z - self.Direction[2]),
-                (x + self.Direction[0], z - self.Direction[2])
-            ]
-            for movim in posiblemovs:
-                distancia = distancia_entre_puntos(movim, centro)
-                if distancia < mejor_distancia:
-                    mejor_distancia = distancia
-                    mejor_movimiento = movim
-                    
-            next_move = mejor_movimiento
-            # Determina la dirección del movimiento en base a next_move y self.Position
+            # Determina la dirección en la que moverse para alcanzar (0, 0)
+            if self.Position[2] > 0:
+                next_move = (self.Position[0], self.Position[2] - self.Direction[2])
+                self.angulo = 180
+            elif self.Position[2] < 0:
+                self.angulo = 0
+                next_move = (self.Position[0], self.Position[2] + self.Direction[2])
+            elif self.Position[0] > 0:
+                next_move = (self.Position[0] - self.Direction[0], self.Position[2])
+                self.angulo = -90      
+            elif self.Position[0] < 0:
+                next_move = (self.Position[0] + self.Direction[0], self.Position[2])
+                self.angulo = 90
+
             dx = next_move[0] - self.Position[0]
             dz = next_move[1] - self.Position[2]
         
@@ -507,39 +393,101 @@ class Carro:
             if dz != 0:
                 dz /= abs(dz)
                 dz *= 5
-            
+                
             # Actualiza self.Position
             self.Position[0] = next_move[0]
             self.Position[2] = next_move[1]
             #Se cambia el estado del agente para elevar la basura
             self.basura.update((self.Position[0] + dx,self.AlturaPlataforma,self.Position[2] + dz))
-            if next_move == centro:
+            if next_move == (0,0):
                 self.condition = self.BAJANDO
 
+        # elif self.condition == self.CARGADO:            
+        #     centro = (0,0)
+        #     mejor_movimiento = None
+        #     mejor_distancia = float('inf')  # Inicializar con un valor muy grande
+        #     posiblemovs = [
+        #         (x + self.Direction[0], z),
+        #         (x + self.Direction[0], z + self.Direction[2]),
+        #         (x, z + self.Direction[2]),
+        #         (x - self.Direction[0], z + self.Direction[2]),
+        #         (x - self.Direction[0], z),
+        #         (x - self.Direction[0], z - self.Direction[2]),
+        #         (x, z - self.Direction[2]),
+        #         (x + self.Direction[0], z - self.Direction[2])
+        #     ]
+        #     for movim in posiblemovs:
+        #         distancia = distancia_entre_puntos(movim, centro)
+        #         if distancia < mejor_distancia:
+        #             mejor_distancia = distancia
+        #             mejor_movimiento = movim
+                    
+        #     next_move = mejor_movimiento
+        #     # Determina la dirección del movimiento en base a next_move y self.Position
+        #     dx = next_move[0] - self.Position[0]
+        #     dz = next_move[1] - self.Position[2]
+        
+        #     if dx != 0:
+        #         dx /= abs(dx)
+        #         dx *= 5
+        #     if dz != 0:
+        #         dz /= abs(dz)
+        #         dz *= 5
+            
+        #     # Actualiza self.Position
+        #     self.Position[0] = next_move[0]
+        #     self.Position[2] = next_move[1]
+        #     #Se cambia el estado del agente para elevar la basura
+        #     self.basura.update((self.Position[0] + dx,self.AlturaPlataforma,self.Position[2] + dz))
+        #     if next_move == centro:
+        #         self.condition = self.BAJANDO
 
+        
+        # elif self.condition == self.REGRESANDO:
+        #     mejor_movimiento = None
+        #     mejor_distancia = float('inf')  # Inicializar con un valor muy grande
+        #     posiblemovs = [
+        #         (x + self.Direction[0], z),
+        #         (x + self.Direction[0], z + self.Direction[2]),
+        #         (x, z + self.Direction[2]),
+        #         (x - self.Direction[0], z + self.Direction[2]),
+        #         (x - self.Direction[0], z),
+        #         (x - self.Direction[0], z - self.Direction[2]),
+        #         (x, z - self.Direction[2]),
+        #         (x + self.Direction[0], z - self.Direction[2])
+        #     ]
+        #     for movim in posiblemovs:
+        #         distancia = distancia_entre_puntos(movim, self.basuraPos)
+        #         if distancia < mejor_distancia:
+        #             mejor_distancia = distancia
+        #             mejor_movimiento = movim
+        #     next_move = mejor_movimiento
+        #     self.Position[0] = next_move[0]
+        #     self.Position[2] = next_move[1]
+        #     if next_move == self.basuraPos:
+        #         self.condition = self.BUSCANDO
+        #         self.angulo = self.ultimoAngulo
+                
         elif self.condition == self.REGRESANDO:
-            mejor_movimiento = None
-            mejor_distancia = float('inf')  # Inicializar con un valor muy grande
-            posiblemovs = [
-                (x + self.Direction[0], z),
-                (x + self.Direction[0], z + self.Direction[2]),
-                (x, z + self.Direction[2]),
-                (x - self.Direction[0], z + self.Direction[2]),
-                (x - self.Direction[0], z),
-                (x - self.Direction[0], z - self.Direction[2]),
-                (x, z - self.Direction[2]),
-                (x + self.Direction[0], z - self.Direction[2])
-            ]
-            for movim in posiblemovs:
-                distancia = distancia_entre_puntos(movim, self.basuraPos)
-                if distancia < mejor_distancia:
-                    mejor_distancia = distancia
-                    mejor_movimiento = movim
-            next_move = mejor_movimiento
+            # Determina la dirección en la que moverse para alcanzar (0, 0)
+            if self.Position[2] > self.basuraPos[1]:
+                next_move = (self.Position[0], self.Position[2] - self.Direction[2])
+                self.angulo = 180
+            elif self.Position[2] < self.basuraPos[1]:
+                self.angulo = 0
+                next_move = (self.Position[0], self.Position[2] + self.Direction[2])
+            elif self.Position[0] > self.basuraPos[0]:
+                next_move = (self.Position[0] - self.Direction[0], self.Position[2])
+                self.angulo = -90      
+            elif self.Position[0] < self.basuraPos[0]:
+                next_move = (self.Position[0] + self.Direction[0], self.Position[2])
+                self.angulo = 90
             self.Position[0] = next_move[0]
             self.Position[2] = next_move[1]
             if next_move == self.basuraPos:
                 self.condition = self.BUSCANDO
+                self.angulo = self.ultimoAngulo
+                
                 
     def drawFace(self, x1,  y1, z1, x2, y2, z2,x3, y3, z3,x4,  y4,  z4):
         glBegin(GL_QUADS)
@@ -563,12 +511,12 @@ class Carro:
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
         
-        if self.condition == self.CARGADO:
+        #if self.condition == self.CARGADO:
             # Calcula el ángulo para apuntar hacia el origen (0,0,0)
-            anguloOrigen = math.atan2(-self.Position[2], -self.Position[0]) * 180 / math.pi
+        #    anguloOrigen = math.atan2(-self.Position[2], -self.Position[0]) * 180 / math.pi
 
             # Aplica una rotación para que la parte delantera apunte hacia el origen
-            glRotatef(anguloOrigen, 0, 1, 0)
+       #     glRotatef(anguloOrigen, 0, 1, 0)
         
         glRotatef(self.angulo, 0, 1, 0)
         glColor3f(1.0, 1.0, 1.0)

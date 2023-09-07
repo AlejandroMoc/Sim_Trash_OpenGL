@@ -54,7 +54,9 @@ robotpositions=[
     (DimBoard,DimBoard),
     (-DimBoard,DimBoard)
 ]
-        
+ 
+velocidad = 2.0
+       
 textures = []
 filename1 = "metalAmarillo.bmp"
 filename2 = "cemento.bmp"
@@ -126,7 +128,7 @@ def Init():
     Texturas(filename7)
     
     for i in range(ncarros):
-        carros.append(Carro(DimBoard, 1.0, robotpositions[i], i))
+        carros.append(Carro(DimBoard, velocidad, robotpositions[i], i))
     for i in range(nbasuras):
         basuras.append(Basura(DimBoard))
 
