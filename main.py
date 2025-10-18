@@ -1,4 +1,3 @@
-import sys
 import math
 import pygame
 
@@ -16,7 +15,6 @@ from OpenGL.GLU import (
     gluPerspective, gluLookAt
 )
 
-sys.path.append('..')
 from models import Carro
 from models import Basura
 
@@ -27,6 +25,11 @@ screen_height = 700
 FOVY = 60.0
 ZNEAR = 0.01
 ZFAR = 900.0
+
+BASE_RADIUS = 400.0
+BASE_HEIGHT = 150.0
+ELEVATION_ANGLE = 0.0
+Theta = 45.0
 
 EYE_X = 300.0
 EYE_Y = 200.0
@@ -46,49 +49,45 @@ Y_MAX = 700
 Z_MIN = -700
 Z_MAX = 700
 
-DimBoard = 200
+board_limit = 200
 
 pygame.init()
 
-carros = []
-ncarros = 4
+car_list = []
+car_number = 4
 
-basuras = []
-nbasuras = 10
+trash_list = []
+trash_number = 10
 
-robotpositions = [
-    (DimBoard,-DimBoard),
-    (-DimBoard,-DimBoard),
-    (DimBoard,DimBoard),
-    (-DimBoard,DimBoard)
+robot_positions = [
+    (board_limit,-board_limit),
+    (-board_limit,-board_limit),
+    (board_limit,board_limit),
+    (-board_limit,board_limit)
 ]
 
-velocidad = 2.0
+velocity = 2.0
 
-textures = []
-filename1 = "src/img/metalAmarillo.bmp"
-filename2 = "src/img/cemento.bmp"
-filename3 = "src/img/carro.bmp"
-filename4 = "src/img/carroAtras.bmp"
-filename5 = "src/img/carroVentana.bmp"
-filename6 = "src/img/carroPuerta.bmp"
-filename7 = "src/img/basura.bmp"
+texture_list = []
+filename_1 = "src/img/metalAmarillo.bmp"
+filename_2 = "src/img/cemento.bmp"
+filename_3 = "src/img/carro.bmp"
+filename_4 = "src/img/carroAtras.bmp"
+filename_5 = "src/img/carroVentana.bmp"
+filename_6 = "src/img/carroPuerta.bmp"
+filename_7 = "src/img/basura.bmp"
 
-Theta  = 0
-Direction = [300.0,200.0,300.0]
-ELEVATION_ANGLE = 0.0
 
 def DegToRad(g):
     return ((g*math.pi)/180.0)
 
-def LookAt(vertical):
+def LookAt():
     global EYE_X, EYE_Y, EYE_Z
-    radius = math.sqrt((EYE_X - CENTER_X)**2 + (EYE_Z - CENTER_Z)**2)
-    new_angle = math.atan2(EYE_Z - CENTER_Z, EYE_X - CENTER_X) + math.radians(Theta)
-    EYE_X = CENTER_X + radius * math.cos(new_angle)
-    EYE_Z = CENTER_Z + radius * math.sin(new_angle)
-    if vertical:
-        EYE_Y = CENTER_Y + radius * math.sin(math.radians(ELEVATION_ANGLE))
+    rad = math.radians(Theta)
+    EYE_X = CENTER_X + BASE_RADIUS * math.cos(rad)
+    EYE_Z = CENTER_Z + BASE_RADIUS * math.sin(rad)
+    EYE_Y = BASE_HEIGHT + ELEVATION_ANGLE
+
 
 def DisplayAxis():
     glShadeModel(GL_FLAT)
@@ -132,33 +131,35 @@ def InitSimulation():
     glEnable(GL_DEPTH_TEST)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-    LoadTexture(filename1)
-    LoadTexture(filename2)
-    LoadTexture(filename3)
-    LoadTexture(filename4)
-    LoadTexture(filename5)
-    LoadTexture(filename6)
-    LoadTexture(filename7)
+    LoadTexture(filename_1)
+    LoadTexture(filename_2)
+    LoadTexture(filename_3)
+    LoadTexture(filename_4)
+    LoadTexture(filename_5)
+    LoadTexture(filename_6)
+    LoadTexture(filename_7)
 
-    for i in range(ncarros):
-        carros.append(Carro(DimBoard, velocidad, robotpositions[i], i))
-    for i in range(nbasuras):
-        basuras.append(Basura(DimBoard))
+    for i in range(car_number):
+        car_list.append(Carro(board_limit, velocity, robot_positions[i], i))
+    for i in range(trash_number):
+        trash_list.append(Basura(board_limit))
 
 def DisplayPlane():
 
     glColor3f(230, 230, 230)
     glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, textures[1])
+    glBindTexture(GL_TEXTURE_2D, texture_list[1])
     glBegin(GL_QUADS)
+
     glTexCoord2f(0.0, 0.0)
-    glVertex3d(-DimBoard, 0.0, -DimBoard)
+    glVertex3d(-board_limit, 0.0, -board_limit)
     glTexCoord2f(1.0, 0.0)
-    glVertex3d(DimBoard, 0.0, -DimBoard)
+    glVertex3d(board_limit, 0.0, -board_limit)
     glTexCoord2f(1.0, 1.0)
-    glVertex3d(DimBoard, 0.0, DimBoard)
+    glVertex3d(board_limit, 0.0, board_limit)
     glTexCoord2f(0.0, 1.0)
-    glVertex3d(-DimBoard, 0.0, DimBoard)
+    glVertex3d(-board_limit, 0.0, board_limit)
+
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
@@ -168,69 +169,98 @@ def display():
     DisplayAxis()
     DisplayPlane()
 
-    for bas in basuras:
-        # bas.draw(textures,6)
-        bas.drawTrash(textures,6)
-    for obj in carros:
-        obj.drawCar(textures,0, 2, 3, 4, 5)
-        obj.update()
-        #Si la condición de la basura es 0 (buscando)
-        #pasar por la función buscaColision
-        if obj.condition == 0:
-            obj.buscaColision(basuras)
+    for trash in trash_list:
+        trash.drawTrash(texture_list,6)
+
+    for car in car_list:
+        car.drawCar(texture_list,0, 2, 3, 4, 5)
+        car.update()
+        # If the trash condition is 0 (searching)
+        # call the buscaColision function
+        if car.condition == 0:
+            car.buscaColision(trash_list)
 
 done = False
 
-#Mover aleatoriamente el vector de direccion
+
 def LoadTexture(filepath):
-    textures.append(glGenTextures(1))
-    id = len(textures) - 1
-    glBindTexture(GL_TEXTURE_2D, textures[id])
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP)
+    # Generate a new texture ID and add it to the texture list
+    texture_list.append(glGenTextures(1))
+    id = len(texture_list) - 1
+
+    # Bind the texture and set parameters
+    glBindTexture(GL_TEXTURE_2D, texture_list[id])
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+
+    # Load the image and convert it to a suitable format
     image = pygame.image.load(filepath).convert()
-    w, h = image.get_rect().size
+    width, height = image.get_rect().size
     image_data = pygame.image.tostring(image, "RGBA")
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data)
+
+    # Upload the image data to the currently bound texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+
+    # Generate mipmaps for the texture
     glGenerateMipmap(GL_TEXTURE_2D)
 
+def HandleKeyEvent(event):
+    global Theta, ELEVATION_ANGLE, CENTER_X, CENTER_Z
+    move_step = 10.0
+
+    if event.key == pygame.K_RIGHT:
+        Theta += 2.0
+        if Theta > 359.0:
+            Theta -= 360.0
+    elif event.key == pygame.K_LEFT:
+        Theta -= 2.0
+        if Theta < 0.0:
+            Theta += 360.0
+    elif event.key == pygame.K_UP:
+        ELEVATION_ANGLE += 5.0
+    elif event.key == pygame.K_DOWN:
+        ELEVATION_ANGLE -= 5.0
+
+    # WASD camera translation
+    elif event.key == pygame.K_w:
+        CENTER_X -= move_step * math.cos(math.radians(Theta))
+        CENTER_Z -= move_step * math.sin(math.radians(Theta))
+    elif event.key == pygame.K_s:
+        CENTER_X += move_step * math.cos(math.radians(Theta))
+        CENTER_Z += move_step * math.sin(math.radians(Theta))
+    elif event.key == pygame.K_d:
+        CENTER_X += move_step * math.cos(math.radians(Theta - 90))
+        CENTER_Z += move_step * math.sin(math.radians(Theta - 90))
+    elif event.key == pygame.K_a:
+        CENTER_X += move_step * math.cos(math.radians(Theta + 90))
+        CENTER_Z += move_step * math.sin(math.radians(Theta + 90))
+
 def main():
+    global Theta, ELEVATION_ANGLE
+    Theta = 45.0
+    ELEVATION_ANGLE = 0.0
     InitSimulation()
     done = False
-    global Theta, ELEVATION_ANGLE
+
     while not done:
         for event in pygame.event.get():
-            vertical = False
-            Theta = 0.0
             if event.type == pygame.KEYDOWN:
-                if Theta > 359.0:
-                    Theta = 0.0
-                elif Theta < 1.0:
-                    Theta = 360.0
-                if event.key==pygame.K_RIGHT:
-                    Theta += 1.0
-                if event.key == pygame.K_LEFT:
-                    Theta -= 1.0
-                elif event.key == pygame.K_UP:
-                    ELEVATION_ANGLE += 1.0
-                    vertical = True
-                elif event.key == pygame.K_DOWN:
-                    ELEVATION_ANGLE -= 1.0
-                    vertical = True
+                HandleKeyEvent(event)
             elif event.type == pygame.QUIT:
                 done = True
 
-            LookAt(vertical)
-            glLoadIdentity()
-            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
+        LookAt()
+        glLoadIdentity()
+        gluLookAt(EYE_X, EYE_Y, EYE_Z, CENTER_X, CENTER_Y, CENTER_Z, UP_X, UP_Y, UP_Z)
 
         display()
         pygame.display.flip()
         pygame.time.wait(10)
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()

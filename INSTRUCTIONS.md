@@ -40,6 +40,13 @@ A window will open displaying a 3D city grid with autonomous garbage collection 
 ## Controls
 
 - **Arrow keys**: Rotate and elevate the camera view.
-  - Left/Right: Rotate horizontally
-  - Up/Down: Change elevation angle
+   - Left/Right: Rotate horizontally
+   - Up/Down: Change elevation angle
+
+- **WASD keys**: Move the camera position (translate view)
+   - W: Move forward
+   - S: Move backward
+   - A: Move left
+   - D: Move right
+
 - **Close window**: Exit the simulation
