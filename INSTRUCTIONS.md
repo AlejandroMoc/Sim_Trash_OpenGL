@@ -48,5 +48,7 @@ A window will open displaying a 3D city grid with autonomous garbage collection 
    - S: Move backward
    - A: Move left
    - D: Move right
+   - Q: Move down
+   - R: Move up
 
 - **Close window**: Exit the simulation

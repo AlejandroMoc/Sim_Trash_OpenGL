@@ -30,6 +30,7 @@ BASE_RADIUS = 400.0
 BASE_HEIGHT = 150.0
 ELEVATION_ANGLE = 0.0
 Theta = 45.0
+EYE_Y = BASE_HEIGHT
 
 EYE_X = 300.0
 EYE_Y = 200.0
@@ -236,6 +237,11 @@ def HandleKeyEvent(event):
     elif event.key == pygame.K_a:
         CENTER_X += move_step * math.cos(math.radians(Theta + 90))
         CENTER_Z += move_step * math.sin(math.radians(Theta + 90))
+
+    elif event.key == pygame.K_q:
+        ELEVATION_ANGLE -= move_step
+    elif event.key == pygame.K_r:
+        ELEVATION_ANGLE += move_step
 
 def main():
     global Theta, ELEVATION_ANGLE
