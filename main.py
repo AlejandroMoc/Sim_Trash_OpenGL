@@ -1,43 +1,51 @@
-# Librerías
-import pygame
-import math
-from pygame.locals import *
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
-
-# Se carga el archivo de la clase Cubo
 import sys
+import math
+import pygame
+
+from pygame.locals import DOUBLEBUF, OPENGL
+from OpenGL.GL import (
+    glShadeModel, glLineWidth, glColor3f, glBegin, glVertex3f, glEnd, glMatrixMode,
+    glLoadIdentity, glClearColor, glEnable, glPolygonMode, glBindTexture, glTexParameteri,
+    glTexImage2D, glGenerateMipmap, glClear, glDisable, glVertex3d, glTexCoord2f, glGenTextures,
+    GL_FLAT, GL_LINES, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_PROJECTION,
+    GL_MODELVIEW, GL_DEPTH_TEST, GL_FRONT_AND_BACK, GL_FILL, GL_TEXTURE_2D,
+    GL_CLAMP, GL_LINEAR, GL_RGBA, GL_UNSIGNED_BYTE, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T,
+    GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_QUADS
+)
+from OpenGL.GLU import (
+    gluPerspective, gluLookAt
+)
+
 sys.path.append('..')
-from Carro import Carro
-from Carro import Basura
+from models import Carro
+from models import Basura
+
+# Set up display and camera
 screen_width = 700
 screen_height = 700
-#vc para el obser.
-FOVY=60.0
-ZNEAR=0.01
-ZFAR=900.0
 
-#Variables para definir la posicion del observador
-#gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
-EYE_X=300.0
-EYE_Y=200.0
-EYE_Z=300.0
-CENTER_X=0
-CENTER_Y=0
-CENTER_Z=0
-UP_X=0
-UP_Y=1
-UP_Z=0
+FOVY = 60.0
+ZNEAR = 0.01
+ZFAR = 900.0
 
-#Variables para dibujar los ejes del sistema
-X_MIN=-700
-X_MAX=700
-Y_MIN=-700
-Y_MAX=700
-Z_MIN=-700
-Z_MAX=700
-#Dimension del plano
+EYE_X = 300.0
+EYE_Y = 200.0
+EYE_Z = 300.0
+CENTER_X = 0
+CENTER_Y = 0
+CENTER_Z = 0
+UP_X = 0
+UP_Y = 1
+UP_Z = 0
+
+# Set up axis and plane dimensions
+X_MIN = -700
+X_MAX = 700
+Y_MIN = -700
+Y_MAX = 700
+Z_MIN = -700
+Z_MAX = 700
+
 DimBoard = 200
 
 pygame.init()
@@ -48,23 +56,24 @@ ncarros = 4
 basuras = []
 nbasuras = 10
 
-robotpositions=[
+robotpositions = [
     (DimBoard,-DimBoard),
     (-DimBoard,-DimBoard),
     (DimBoard,DimBoard),
     (-DimBoard,DimBoard)
 ]
- 
+
 velocidad = 2.0
-       
+
 textures = []
-filename1 = "metalAmarillo.bmp"
-filename2 = "cemento.bmp"
-filename3 = "carro.bmp"
-filename4 = "carroAtras.bmp"
-filename5 = "carroVentana.bmp"
-filename6 = "carroPuerta.bmp"
-filename7 = "basura.bmp"
+filename1 = "src/img/metalAmarillo.bmp"
+filename2 = "src/img/cemento.bmp"
+filename3 = "src/img/carro.bmp"
+filename4 = "src/img/carroAtras.bmp"
+filename5 = "src/img/carroVentana.bmp"
+filename6 = "src/img/carroPuerta.bmp"
+filename7 = "src/img/basura.bmp"
+
 Theta  = 0
 Direction = [300.0,200.0,300.0]
 ELEVATION_ANGLE = 0.0
@@ -80,22 +89,25 @@ def LookAt(vertical):
     EYE_Z = CENTER_Z + radius * math.sin(new_angle)
     if vertical:
         EYE_Y = CENTER_Y + radius * math.sin(math.radians(ELEVATION_ANGLE))
-    
-def Axis():
+
+def DisplayAxis():
     glShadeModel(GL_FLAT)
     glLineWidth(3.0)
+
     #X axis in red
     glColor3f(1.0,0.0,0.0)
     glBegin(GL_LINES)
     glVertex3f(X_MIN,0.0,0.0)
     glVertex3f(X_MAX,0.0,0.0)
     glEnd()
+
     #Y axis in green
     glColor3f(0.0,1.0,0.0)
     glBegin(GL_LINES)
     glVertex3f(0.0,Y_MIN,0.0)
     glVertex3f(0.0,Y_MAX,0.0)
     glEnd()
+
     #Z axis in blue
     glColor3f(0.0,0.0,1.0)
     glBegin(GL_LINES)
@@ -104,7 +116,8 @@ def Axis():
     glEnd()
     glLineWidth(1.0)
 
-def Init():
+
+def InitSimulation():
     screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("OpenGL: Carros recogedores")
 
@@ -118,41 +131,43 @@ def Init():
     glClearColor(0,0,0,0)
     glEnable(GL_DEPTH_TEST)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    
-    Texturas(filename1)
-    Texturas(filename2)
-    Texturas(filename3)
-    Texturas(filename4)
-    Texturas(filename5)
-    Texturas(filename6)
-    Texturas(filename7)
-    
+
+    LoadTexture(filename1)
+    LoadTexture(filename2)
+    LoadTexture(filename3)
+    LoadTexture(filename4)
+    LoadTexture(filename5)
+    LoadTexture(filename6)
+    LoadTexture(filename7)
+
     for i in range(ncarros):
         carros.append(Carro(DimBoard, velocidad, robotpositions[i], i))
     for i in range(nbasuras):
         basuras.append(Basura(DimBoard))
 
-def PlanoTexturizado():
-    
+def DisplayPlane():
+
     glColor3f(230, 230, 230)
     glEnable(GL_TEXTURE_2D)
     glBindTexture(GL_TEXTURE_2D, textures[1])
     glBegin(GL_QUADS)
-    glTexCoord2f(0.0, 0.0) 
+    glTexCoord2f(0.0, 0.0)
     glVertex3d(-DimBoard, 0.0, -DimBoard)
-    glTexCoord2f(1.0, 0.0) 
+    glTexCoord2f(1.0, 0.0)
     glVertex3d(DimBoard, 0.0, -DimBoard)
-    glTexCoord2f(1.0, 1.0) 
+    glTexCoord2f(1.0, 1.0)
     glVertex3d(DimBoard, 0.0, DimBoard)
-    glTexCoord2f(0.0, 1.0) 
+    glTexCoord2f(0.0, 1.0)
     glVertex3d(-DimBoard, 0.0, DimBoard)
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
 def display():
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    Axis()
-    PlanoTexturizado()
+    DisplayAxis()
+    DisplayPlane()
+
     for bas in basuras:
         # bas.draw(textures,6)
         bas.drawTrash(textures,6)
@@ -167,7 +182,7 @@ def display():
 done = False
 
 #Mover aleatoriamente el vector de direccion
-def Texturas(filepath):
+def LoadTexture(filepath):
     textures.append(glGenTextures(1))
     id = len(textures) - 1
     glBindTexture(GL_TEXTURE_2D, textures[id])
@@ -181,37 +196,41 @@ def Texturas(filepath):
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data)
     glGenerateMipmap(GL_TEXTURE_2D)
 
-Init()
-while not done:
-    for event in pygame.event.get():
-        #Habilitar cambios verticales en la camara
-        vertical = False
-        Theta = 0.0
-        if event.type == pygame.KEYDOWN:
-            if Theta > 359.0:
-                Theta = 0.0
-            elif Theta < 1.0:
-                Theta = 360.0
-            if event.key==pygame.K_RIGHT:
-                Theta += 1.0
-            if event.key == pygame.K_LEFT:
-                Theta -= 1.0
-            elif event.key == pygame.K_UP:
-                ELEVATION_ANGLE += 1.0
-                vertical = True
-            elif event.key == pygame.K_DOWN:
-                ELEVATION_ANGLE -= 1.0
-                vertical = True
-        elif event.type == pygame.QUIT:
-            done = True
-            
-        LookAt(vertical) 
-        glLoadIdentity()
-        gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
-    
-    display()
+def main():
+    InitSimulation()
+    done = False
+    global Theta, ELEVATION_ANGLE
+    while not done:
+        for event in pygame.event.get():
+            vertical = False
+            Theta = 0.0
+            if event.type == pygame.KEYDOWN:
+                if Theta > 359.0:
+                    Theta = 0.0
+                elif Theta < 1.0:
+                    Theta = 360.0
+                if event.key==pygame.K_RIGHT:
+                    Theta += 1.0
+                if event.key == pygame.K_LEFT:
+                    Theta -= 1.0
+                elif event.key == pygame.K_UP:
+                    ELEVATION_ANGLE += 1.0
+                    vertical = True
+                elif event.key == pygame.K_DOWN:
+                    ELEVATION_ANGLE -= 1.0
+                    vertical = True
+            elif event.type == pygame.QUIT:
+                done = True
 
-    pygame.display.flip()
-    pygame.time.wait(10)
+            LookAt(vertical)
+            glLoadIdentity()
+            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
 
-pygame.quit()
+        display()
+        pygame.display.flip()
+        pygame.time.wait(10)
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()

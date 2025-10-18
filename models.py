@@ -19,7 +19,7 @@ class Cilindro:
 
     def draw(self):
         glPushMatrix()
-        glColor3f(0.0, 0.0, 0.0)  # Color del cilindro (blanco en este caso)
+        glColor3f(0.0, 0.0, 0.0)
 
         quadric = gluNewQuadric()
         gluQuadricNormals(quadric, GLU_SMOOTH)
