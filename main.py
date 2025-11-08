@@ -15,8 +15,8 @@ from OpenGL.GLU import (
     gluPerspective, gluLookAt
 )
 
-from models import Carro
-from models import Basura
+from src.models import TrashCar
+from src.models import TrashBlock
 
 # Set up display and camera
 screen_width = 700
@@ -141,9 +141,9 @@ def InitSimulation():
     LoadTexture(filename_7)
 
     for i in range(car_number):
-        car_list.append(Carro(board_limit, velocity, robot_positions[i], i))
+        car_list.append(TrashCar(board_limit, velocity, robot_positions[i], i))
     for i in range(trash_number):
-        trash_list.append(Basura(board_limit))
+        trash_list.append(TrashBlock(board_limit))
 
 def DisplayPlane():
 
@@ -177,9 +177,9 @@ def display():
         car.drawCar(texture_list,0, 2, 3, 4, 5)
         car.update()
         # If the trash condition is 0 (searching)
-        # call the buscaColision function
+        # call the search_collision function
         if car.condition == 0:
-            car.buscaColision(trash_list)
+            car.search_collision(trash_list)
 
 done = False
 
